@@ -115,11 +115,11 @@ int validarNumeroFlotante(float* pResultado,char* mensaje,char* mensajeError,flo
 
 unsigned int verificarLetra(void){
 	char letra;
-	printf("\nEstá seguro que desea salir(S/N): ?");
+	printf("\nEst%c seguro que desea salir(S/N): ?",160);
 	scanf("%c",&letra);
 	letra = toupper(letra);
 	while(!((letra=='S')||(letra=='N'))){
-		printf("\nHa ingresado opción no valida. Ingrese S para salir o N para volver al menu: ");
+		printf("\nHa ingresado opci%cn no v%clida. Ingrese S para salir o N para volver al menu: ",162,160);
 		fflush(stdin);
 		scanf("%c",&letra);
 		letra = toupper(letra);

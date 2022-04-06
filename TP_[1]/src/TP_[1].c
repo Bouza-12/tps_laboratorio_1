@@ -33,7 +33,7 @@ int main(void) {
 	do{
 		//menu
 		printf("\n================================"
-				"\n1. Ingresar kilómetros: %d"
+				"\n1. Ingresar kil%cmetros: %d"
 				"\n2. Ingresa Precio de Vuelos: "
 				"\n   - Precio vuelo Aerolineas: %2.f"
 				"\n   - Precio vuelo Latam: %2.f"
@@ -41,7 +41,7 @@ int main(void) {
 				"\n4. Informar Resultados: "
 				"\n5. Carga forzada de datos"
 				"\n6. Salir"
-				"\n================================\n",kilometros,precioAerolinias,precioLatam);
+				"\n================================\n",162,kilometros,precioAerolinias,precioLatam);
 		scanf("%d",&opcion);
 		fflush(stdin);
 		switch(opcion){
@@ -53,19 +53,19 @@ int main(void) {
 				break;
 			case 2:
 				printf("\n2.Ingresa Precio de Vuelos:");
-				esFloat = validarNumeroFlotante(&precioAerolinias, "\n - Precio vuelo Aerolíneas: ", "debe ingresar un número válido mayor a 0", 0, 99999999,4);
+				esFloat = validarNumeroFlotante(&precioAerolinias, "\n - Precio vuelo Aerolineas: ", "debe ingresar un número valido mayor a 0", 0, 99999999,4);
 				if(esFloat!=0){
 					printf("Error demasiados intentos fallidos\n.");
 					break;
 				}
-				esFloat = validarNumeroFlotante(&precioLatam, "\n - Precio vuelo Latam", "debe ingresar un número válido mayor a 0", 0, 99999999,4);
+				esFloat = validarNumeroFlotante(&precioLatam, "\n - Precio vuelo Latam: ", "debe ingresar un número valido mayor a 0", 0, 99999999,4);
 				if(esFloat!=0){
 					printf("Error demasiados intentos fallidos.\n");
 					break;
 				}
 				break;
 			case 3:
-				printf("\nSe realizaron los calculos de costos: ");
+				printf("\nSe realizaron los c%clculos de costos: ",160);
 				precioDevitoA = calcularPrecioDebito(precioAerolinias, 10);
 				precioDebitoL = calcularPrecioDebito(precioLatam, 10);
 				precioCreditoA = calcularPrecioCredito(precioAerolinias, 25);
@@ -124,6 +124,7 @@ int main(void) {
 				salir = verificarLetra();
 				break;
 		}
+		system("\npause");
 		system("cls");
 	}while(salir==0);
 	printf("FIN DEL PROGRAMA");
