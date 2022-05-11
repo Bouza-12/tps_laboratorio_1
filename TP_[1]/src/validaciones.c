@@ -9,15 +9,6 @@
 #include <ctype.h>
 #include <conio.h>
 
-/*valido, pido el ingreso de un numero
- * param pResultado. puntero donde aloja el valor si es varificado
- * param mensaje. muestra un string
- * param mensajeError. mustra un string en caso de ingresar un valor no esperado
- * param minimo. minimo valor esperado inclusive
- * param maximo. maximo valor esperado inclusive
- * param reintentos. valor de cantidad de veces maxima que se ejecuta el ciclo
- */
-
 /// valido si el numero entero es el esperado
 /// @param pResultado puntero donde aloja el valor si es varificado
 /// @param mensaje muestra un string
@@ -82,9 +73,6 @@ int validarNumeroFlotante(float* pResultado,char* mensaje,char* mensajeError,flo
 	return retorno;
 }
 
-/* Verifica si la letra ingresada es valida entre 2 esperadas
- *  devuelve 1 si es verdadero 'S' u 0 si es falso 'N'
- */
 
 /// Verifica si un char es el esperada
 /// @return devulevle 1 para S y 0 para N
