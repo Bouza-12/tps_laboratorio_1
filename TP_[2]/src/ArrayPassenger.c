@@ -4,36 +4,8 @@
  *  Created on: 5 may. 2022
  *      Author: bouza
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include "validaciones.h"
 
-
-
-
-//esctructuras
-typedef struct{
-	int id;
-	char name[51];
-	char lastName[51];
-	float price;
-	char flyCode[10];
-	int typePassenger;
-	int statusFlight;
-	int isEmpty;
-}Passenger;
-
-
-#define EMPTY 0
-#define OCCUPED 1
-#define DOWN -1
-
-#define ACTIVO 1
-#define DEMORADO 2
-#define CANCELADO 3
-
+#include "ArrayPassenger.h"
 
 
 /** \brief To indicate that all position in the array are empty,
@@ -73,6 +45,7 @@ int addPassenger(Passenger* list, int len, int id, char* name,char* lastName,flo
 	{
 		if(list[i].isEmpty ==0)
 		{
+
 			list[i].id = id;
 			strcpy(list[i].name,name);
 			strcpy(list[i].lastName,lastName);
@@ -80,7 +53,9 @@ int addPassenger(Passenger* list, int len, int id, char* name,char* lastName,flo
 			list[i].typePassenger = typePassenger;
 			strcpy(list[i].flyCode,flycode);
 			list[i].isEmpty = OCCUPED;
+			list[i].statusFlight = ACTIVO;
 			retorno =0;
+
 			break;
 		}
 	}
@@ -113,7 +88,7 @@ int findPassengerById(Passenger* list, int len,int id)
 	return retorno;
 }
 
-/** \brief Remove a Passenger by Id (put isEmpty Flag in 1)
+/** \brief Remove a Passenger by Id (put isEmpty Flag in -1 to not overwrite)
 *
 * \param list Passenger*
 * \param len int
@@ -125,15 +100,23 @@ find a passenger] - (0) if Ok
 int removePassenger(Passenger* list, int len, int id)
 {
 	int retorno=-1;
+	int sure=-1;
 	if(list!=NULL)
 	{
 		for(int i=0;i<len;i++)
 		{
 			if(list[i].isEmpty==OCCUPED && list[i].id == id)
 			{
-				//se puede agregar el preguntas si esta seguro
-				list[i].isEmpty = DOWN;
-				retorno = 0;
+				sure =verificarSalida("\nEsta seguro que desea dar de BAJA el pasajero? S|N: ", "\nERROR!!! Debe ingresar un caracter valido 'S' para SI o 'N' para NO: ");
+				if(sure==1)
+				{
+					list[i].isEmpty = DOWN;
+					retorno = 0;
+				}
+				else
+				{
+					printf("No se dio de BAJA al pasajero");
+				}
 				break;
 			}
 		}
@@ -152,7 +135,7 @@ int printPassenger(Passenger list[], int length)
 {
 	if(list!=NULL)
 		{
-		printf("  ID         NOMBRE       APELLIDO    PRECIO    CODIGO  TIPO DE PASS");
+		printf("\n  ID         NOMBRE       APELLIDO    PRECIO        CODIGO  TIPO DE PASS\n");
 			for(int i=0;i<length;i++)
 			{
 				if(list[i].isEmpty ==OCCUPED)
@@ -196,7 +179,7 @@ int sortPassengers(Passenger* list, int len, int order)
 			{
 				for(j=i+1;j<len;j++)
 				{
-					if((strcmp(list[i].lastName,list[j].lastName)>0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+					if((strcmp(list[i].lastName,list[j].lastName)>0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 					{
 						listAux = list[i];
 						list[i]=list[j];
@@ -204,7 +187,7 @@ int sortPassengers(Passenger* list, int len, int order)
 					}
 					else
 					{
-						if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+						if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 						{
 							if(list[i].typePassenger>list[j].typePassenger)
 							{
@@ -223,7 +206,7 @@ int sortPassengers(Passenger* list, int len, int order)
 			{
 				for(j=i+1;j<len;j++)
 				{
-					if((strcmp(list[i].lastName,list[j].lastName)<0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+					if((strcmp(list[i].lastName,list[j].lastName)<0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 					{
 						listAux = list[i];
 						list[i]=list[j];
@@ -231,7 +214,7 @@ int sortPassengers(Passenger* list, int len, int order)
 					}
 					else
 					{
-						if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+						if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 						{
 							if(list[i].typePassenger>list[j].typePassenger)
 							{
@@ -249,67 +232,75 @@ int sortPassengers(Passenger* list, int len, int order)
 	return retorno;
 }
 
-void modifyPassenger(Passenger list[], int len,)
+void modifyPassenger(Passenger list[], int len,int idmax)
 {
 	int modifValidada;
 	int idModify;
+	int positionModify;
 	int optionModify;
 	int validarChangePrice;
 	int validarChangetTipo;
 	float changePriceAux;
+	int changeTipoAux;
 
-	modifValidada = validarEntero(&idModify, "\nIngrese el ID del pasajero a MODIFICAR: ", "\nError!!! Debe ingresar un ID valido: ", 1000, idstatico);
+	printPassenger(list, len);
+
+
+	modifValidada = validarEntero(&idModify, "\nIngrese el ID del pasajero a MODIFICAR: ", "\nError!!! Debe ingresar un ID valido: ", 1000, idmax);
 	if(modifValidada==0)
 	{
-		if(list!=NULL && len>0)
+		positionModify = findPassengerById(list, len, idModify);
+		if(list[positionModify].isEmpty==OCCUPED && list[positionModify].id==idModify)
 		{
-			for(int i=0;i<len;i++)
+			optionModify = menuOptionInt("\n¿Que desea modificar?\n1. NOMBRE\n2. APELLIDO\n3. PRECIO\n4. TIPO DE PASAJERO\n5. CODIGO DE VUELO\n6. SALIR", 1, 6);
+			switch(optionModify)
 			{
-				if(list[i].isEmpty==OCCUPED && list[i].id==idModify)
-				{
-					optionModify = menuOptionInt("\n¿Que desea modificar?\n1. NOMBRE\n2. APELLIDO\n3. PRECIO\n4. TIPO DE PASAJERO\n5. CODIGO DE VUELO\nElija una opcion: ", 1, 5);
-					switch(optionModify)
+				case 1:
+					cargarNombre(list[positionModify].name, 51, "Ingrese el NOMBRE del Pasajero: ");
+					break;
+				case 2:
+					cargarNombre(list[positionModify].lastName, 51, "Ingrese el APELLIDO del Pasajero: ");
+					break;
+				case 3:
+					validarChangePrice = validarNumeroFlotante(&changePriceAux, "\nIngrese el nuevo PRECIO del pasaje: ", "\nError!!! debe ingresar un PRECIO  valido: ", 1, 9999999999, 5);
+					if(validarChangePrice==0)
 					{
-						case 1:
-							cargarNombre(list[i].name, 51, "Ingrese el NOMBRE del Pasajero");
-							break;
-						case 2:
-							cargarNombre(list[i].lastName, 51, "Ingrese el APELLIDO del Pasajero");
-							break;
-						case 3:
-							validarChangePrice = validarNumeroFlotante(&changePriceAux, "\nIngrese el nuevo PRECIO del pasaje: ", "\nError!!! debe ingresar un PRECIO  valido: ", 1, 9999999999, 5);
-							if(validarChangePrice==0)
-							{
-								list[i].price = changePriceAux;
-							}
-							else
-							{
-								printf("No se pudo realizar el cambio de precio.");
+						list[positionModify].price = changePriceAux;
+					}
+					else
+					{
+						printf("No se pudo realizar el cambio de precio.");
 
-							}
-							break;
-						case 4:
-
-							break;
-						case 5:
-							printf("Ingrese el nuevo codigo de vuelo: ");
-							scanf("%s", list[i].flyCode);
-							break;
 					}
 					break;
-				}
-				break;
+				case 4:
+					validarChangetTipo = validarEntero(&changeTipoAux, "\nIngrese el Tipo de Pasajero: ", "\nError!!! Debe ingresar un tipo de pasajero valido: ", 1, 3);
+					if(validarChangetTipo==0)
+					{
+						list[positionModify].typePassenger = changeTipoAux;
+						printf("\nSe hizo el cambio con exito.");
+					}
+					else
+					{
+						printf("No se realizaron los cambios.");
+					}
+					break;
+				case 5:
+					printf("Ingrese el nuevo codigo de vuelo: ");
+					scanf("%s", list[positionModify].flyCode);
+					break;
+				case 6:
+					verificarSalida("Salir sin modificar? S|N ", "Debe ingresar S o N");
+					break;
 			}
 		}
-
 	}
-	else
-	{
-		printf("No se reconoce el ID, no se puede moificar ningun dato.\n");
-	}
-
 }
 
+/// Mustra los vuelos de estado ACTIVO por orden alfabetico
+/// @param list: lista de Passenger
+/// @param len: largo maximo de la lista
+/// @return: devuelve 0 si hubo exito en mostrar la lista / -1 si no pudo mostrar
 int showActiveFlights(Passenger* list, int len)
 {
 	int retorno =-1;
@@ -325,7 +316,7 @@ int showActiveFlights(Passenger* list, int len)
 		{
 			for(j=i+1;j<len;j++)
 			{
-				if((strcmp(list[i].flyCode,list[j].flyCode)>0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+				if((strcmp(list[i].flyCode,list[j].flyCode)>0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 				{
 					listAux = list[i];
 					list[i]=list[j];
@@ -333,7 +324,7 @@ int showActiveFlights(Passenger* list, int len)
 				}
 				else
 				{
-					if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==EMPTY && list[j].isEmpty == EMPTY))
+					if((strcmp(list[i].lastName,list[j].lastName)==0) && (list[i].isEmpty==OCCUPED && list[j].isEmpty == OCCUPED))
 					{
 						if(list[i].statusFlight>list[j].statusFlight)
 						{
@@ -345,11 +336,11 @@ int showActiveFlights(Passenger* list, int len)
 				}
 			}
 		}
-		for(k=0;i<len;k++)
+		for(k=0;k<len;k++)
 		{
-			if(list[i].isEmpty==OCCUPED && list[i].statusFlight==ACTIVO)
+			if(list[k].isEmpty==OCCUPED && list[k].statusFlight==ACTIVO)
 			{
-				printf("\n --- %s ---",list[i].flyCode);
+				printf("\n --- %s --- %s, %s",list[k].flyCode,list[k].lastName,list[k].name);
 			}
 		}
 	}
@@ -358,6 +349,10 @@ int showActiveFlights(Passenger* list, int len)
 	return retorno;
 }
 
+/// suma los precios de una lista de Passenger, los muestra y devuelve el promedio
+/// @param list: lista de Passenger
+/// @param len: largo de la lista
+/// @return: el float del promedio.
 float pricePromedio(Passenger list[],int len)
 {
 	float acumuladorPrice=0, contadorPrice=0, promedio;
@@ -374,17 +369,21 @@ float pricePromedio(Passenger list[],int len)
 	return promedio;
 }
 
+/// Mustra de una lista de passenger los que superan el promedio de precio
+/// @param list: lista de Passenger
+/// @param len: largo de la lista
+/// @param promedio: variable para mostrar los que superen este numero.
 void showAboveProm(Passenger list[],int len, float promedio)
 {
 	if(list!=NULL)
 	{
 		printf("\nLos pasajes por encima del promedio son: ");
-		printf("  ID         NOMBRE       APELLIDO    PRECIO    CODIGO  TIPO DE PASS");
+		printf("\n  ID         NOMBRE       APELLIDO    PRECIO    CODIGO  TIPO DE PASS");
 		for(int i=0;i<len;i++)
 		{
 			if(list[i].isEmpty ==OCCUPED && list[i].price>=promedio)
 			{
-				printf("%5d %15s %15s %.2f %12s %4d %4d\n",list[i].id
+				printf("\n%5d %15s %15s %.2f %12s %4d %4d",list[i].id
 											 ,list[i].name
 											 ,list[i].lastName
 											 ,list[i].price

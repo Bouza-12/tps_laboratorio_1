@@ -4,10 +4,7 @@
  *  Created on: 14 abr. 2022
  *      Author: Alejandro Javier Garcia Bouzada
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
+#include "validaciones.h"
 
 /// valido si el numero entero es el esperado
 /// @param pResultado puntero donde aloja el valor si es varificado
@@ -229,3 +226,26 @@ int OrdenarNumerosFloatDescendente(float vector[],int len)
 	}
 	return retorno;
 }
+
+/// Sirve para cargar un nombre propio pone la primera letra en mayus y las siguientes en min de cada palabra
+/// @param vector: lugar a guardar el nombre ingresado
+/// @param len: largo maximo del string
+/// @param mensaje: texto para mostrar al usuario sobre que debe ingresar
+void cargarNombre(char vector[], int len, char *mensaje)
+{
+	printf(mensaje);
+	scanf("%[^\n]",vector);
+	fflush(stdin);
+	for(int i=0;i<len;i++)
+	{
+		vector[i] = tolower(vector[i]);
+	}
+	vector[0] = toupper(vector[0]);
+	for(int i =0;i<len;i++)
+	{
+		if(vector[i]==' '){
+			vector[i+1] = toupper(vector[i+1]);
+		}
+	}
+}
+

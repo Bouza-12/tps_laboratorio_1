@@ -16,6 +16,7 @@
 
 #include "validaciones.h"
 #include "ArrayPassenger.h"
+#include "menus.h"
 //defines
 #define MAX_PASSENGER 2000
 #define TURISTA 1
@@ -37,7 +38,7 @@ static int ePassenger_getID() {
 //void cargaForzada(Passenger list[],int len);
 
 
-void cargarNombre(char vector[], int len, char *mensaje);
+
 
 
 //MAIN
@@ -47,15 +48,14 @@ int main(void)
 	//VARIABLES
 	Passenger listPassengers[MAX_PASSENGER];
 
-	int optionMenu, optionModify, optionInform;
-	int flagEnd=0, contadorPassenger=0, bajaValidada, modifValidada;
+	int optionMenu, optionInform;
+	int flagEnd=0, contadorPassenger=0, bajaValidada;
 	int addSuccess;
 	int typePassenger;
 	char name[51], lastName[51], flycode[10];
 	float price, promedioPrices;
-	int validarFloat, validarInt, validarCambioPrecio;
-	int idBaja, idAlta, bajaEfectiva, idModify;
-	float auxCambioPrecio;
+	int validarFloat, validarInt, validarActivos;
+	int idBaja, idAlta, bajaEfectiva;
 
 	initPassengers(listPassengers, MAX_PASSENGER);
 
@@ -63,13 +63,14 @@ int main(void)
 //	contadorPassenger =4;
 	do
 	{
-		optionMenu = menuOptionInt("MENU PRINCIPAL:\n1. ALTA DE PASAJERO\n2. MODIFICAR UN PASAJERO\n3. BAJA DE UN PASAJERO\n4. LISTA DE INFORME\n5. SALIR", 1 , 5);
+		optionMenu = menuOptionInt("\nMENU PRINCIPAL:\n1. ALTA DE PASAJERO\n2. MODIFICAR UN PASAJERO\n3. BAJA DE UN PASAJERO\n4. LISTA DE INFORME\n5. SALIR", 1 , 5);
 		switch(optionMenu)
 		{
 			case 1: //ALTAS: Se debe permitir ingresar un pasajero calculando automáticamente el
 //				      número de Id. El resto de los campos se le pedirá al usuario.
 				cargarNombre(name, 51, "Ingrese el NOMBRE del pasajero: ");
 				cargarNombre(lastName, 51, "Ingrese el APELLIDO del pasajero: ");
+
 				validarFloat = validarNumeroFlotante(&price, "Ingrese el PRECIO del pasaje: ", "Error!!! Debe ingresar un PRECIO valido: ", 1, 999999999 , 5);
 				if(validarFloat!=0)
 				{
@@ -101,8 +102,7 @@ int main(void)
 //				   	  o Precio o Tipo de pasajero o Código de vuelo
 				if(contadorPassenger>0)
 				{
-					printPassenger(listPassengers, MAX_PASSENGER);
-
+					modifyPassenger(listPassengers, MAX_PASSENGER,idIncremental);
 				}
 				else
 				{
@@ -143,29 +143,37 @@ int main(void)
 					//2. Total y promedio de los precios de los pasajes, y cuántos pasajeros superan el precio
 					//promedio.
 					//3. Listado de los pasajeros por Código de vuelo y estados de vuelos ‘ACTIVO’
+				//Verifico que haya al menos un pasajero cargado
 				if(contadorPassenger>0)
 				{
+					//Muestro menu de informes
 					optionInform = menuOptionInt("\n1. Lista de pasajero ordenados.\n2. Total y promedio de precios de los pasaje. Cuantos superan el precio\n3. Listado de pasajero segun codigo de vuelo y estado activo", 1, 3);
 					switch (optionInform)
 					{
 						case 1:
+							//Ordeno pasageros por Apellido ascendente y si tienen el mismo apellido por mayor tipo de pasajero
 							sortPassengers(listPassengers, MAX_PASSENGER, 1);
+							printPassenger(listPassengers, MAX_PASSENGER);
 							break;
 						case 2:
+							//Asigno el promedio a la variable, tambien muesto el promedio y el acumulado
 							promedioPrices = pricePromedio(listPassengers, MAX_PASSENGER);
+							//Muestro superiores al promedio
 							showAboveProm(listPassengers, MAX_PASSENGER, promedioPrices);
 							break;
 						case 3:
-							validarInt = -1;
-							validarInt = showActiveFlights(listPassengers, MAX_PASSENGER);
-							if(validarInt==0)
+							validarActivos = showActiveFlights(listPassengers, MAX_PASSENGER);
+							if(validarActivos==0)
 							{
-								printtf("\n Vuelos Activos OK");
+								printf("\n Vuelos Activos OK");
 							}
 							else
 							{
 								printf("No se pudieron mostrar los vuelos ACTIVOS.");
 							}
+							break;
+						default:
+							printf("Ocurrio un error y no se puedo informar.");
 							break;
 					}
 
@@ -193,23 +201,6 @@ int main(void)
 
 //FUNCIONES
 
-void cargarNombre(char vector[], int len, char *mensaje)
-{
-	printf(mensaje);
-	scanf("%[^\n]",vector);
-	fflush(stdin);
-	for(int i=0;i<len;i++)
-	{
-		vector[i] = tolower(vector[i]);
-	}
-	vector[0] = toupper(vector[0]);
-	for(int i =0;i<len;i++)
-	{
-		if(vector[i]==' '){
-			vector[i+1] = toupper(vector[i+1]);
-		}
-	}
-}
 
 
 

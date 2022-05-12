@@ -21,5 +21,6 @@ int OrdenarNumerosDescendente(int vector[],int len);
 int OrdenarNumerosFloatDescendente(float vector[],int len);
 int OrdenarNumerosCharAscendente(char vector[],int len);
 
+void cargarNombre(char vector[], int len, char *mensaje);
 
 #endif /* VALIDACIONES_H_ */
