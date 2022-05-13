@@ -8,6 +8,11 @@
 #ifndef VALIDACIONES_H_
 #define VALIDACIONES_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 int validarEntero(int* pResultado,char* mensaje,char* mensajeError,int minimo,int maximo);
 int validarNumeroFlotante(float* pResultado,char* mensaje,char* mensajeError,float minimo,float maximo, int reintentos);
 int validarRangoChar(char* pResultado,char* mensaje,char* mensajeError,int minimo,int maximo);

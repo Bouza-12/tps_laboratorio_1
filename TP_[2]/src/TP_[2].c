@@ -13,33 +13,12 @@
 #include <string.h>
 #include <ctype.h>
 
-
+//BIBLIOTECAS
 #include "validaciones.h"
 #include "ArrayPassenger.h"
 #include "menus.h"
 //defines
 #define MAX_PASSENGER 2000
-#define TURISTA 1
-#define EJECUTIVA 2
-#define PRIMERA 3
-
-#define EMPTY 0
-#define OCCUPED 1
-#define DOWN -1
-
-static int idIncremental = 1000;
-static int ePassenger_getID();
-/// Funcion para encontrar un id unico sin depender de posiciones
-/// @return devuelve el id generado
-static int ePassenger_getID() {
-	return idIncremental++;
-}
-
-//void cargaForzada(Passenger list[],int len);
-
-
-
-
 
 //MAIN
 int main(void)
@@ -49,60 +28,36 @@ int main(void)
 	Passenger listPassengers[MAX_PASSENGER];
 
 	int optionMenu, optionInform;
-	int flagEnd=0, contadorPassenger=0, bajaValidada;
-	int addSuccess;
-	int typePassenger;
-	char name[51], lastName[51], flycode[10];
-	float price, promedioPrices;
-	int validarFloat, validarInt, validarActivos;
-	int idBaja, idAlta, bajaEfectiva;
+	int flagEnd=0, contadorPassenger=0;
+	int bajaValidada;
+	int altaSuccess;
+	float promedioPrices;
+	int validarActivos;
+	int idBaja, bajaEfectiva;
+	int idIncremental;
 
+	//Inicio la lista de pasajeros en EMPTY
 	initPassengers(listPassengers, MAX_PASSENGER);
 
-//	cargaForzada(listPassengers, MAX_PASSENGER);
-//	contadorPassenger =4;
 	do
 	{
+		//MENU PRINCIPAL
 		optionMenu = menuOptionInt("\nMENU PRINCIPAL:\n1. ALTA DE PASAJERO\n2. MODIFICAR UN PASAJERO\n3. BAJA DE UN PASAJERO\n4. LISTA DE INFORME\n5. SALIR", 1 , 5);
 		switch(optionMenu)
 		{
 			case 1: //ALTAS: Se debe permitir ingresar un pasajero calculando automáticamente el
-//				      número de Id. El resto de los campos se le pedirá al usuario.
-				cargarNombre(name, 51, "Ingrese el NOMBRE del pasajero: ");
-				cargarNombre(lastName, 51, "Ingrese el APELLIDO del pasajero: ");
-
-				validarFloat = validarNumeroFlotante(&price, "Ingrese el PRECIO del pasaje: ", "Error!!! Debe ingresar un PRECIO valido: ", 1, 999999999 , 5);
-				if(validarFloat!=0)
+				    //número de Id. El resto de los campos se le pedirá al usuario.
+				altaSuccess = cargaPassenger(listPassengers, MAX_PASSENGER, &contadorPassenger, &idIncremental);
+				if(altaSuccess !=1)
 				{
-					printf("No se pudo ingresar el precio!!!");
-					break;
-				}
-				validarInt = validarEntero(&typePassenger, "Ingrese el TIPO DE PASAJERO\n1 - Clase TURISTA\n2 - Clase EJECUTIVA\n3 - PRIMERA CLASE\n", "Error!!! Debe seleccionar una opcion correcta: ", 1, 3);
-				if(validarInt!=0)
-				{
-					printf("No se pudo ingresar el Tipo de Pasajero!!!");
-					break;
-				}
-				printf("Ingrese el CODIGO DE VUELO: ");
-				scanf("%s",flycode);
-				fflush(stdin);
-				idAlta = ePassenger_getID();
-				addSuccess = addPassenger(listPassengers, MAX_PASSENGER, idAlta, name, lastName, price, typePassenger, flycode);
-				if(addSuccess!=0)
-				{
-					printf("Ocurrio un error al cargar el pasajero, intentelo de nuevo.");
-				}
-				else
-				{
-					contadorPassenger++;
-					printf("Se dio de alta con exito!");
+					printf("No se dio de alta al pasajero");
 				}
 				break;
 			case 2: //MODIFICAR: Se ingresará el Número de Id, permitiendo modificar: o Nombre o Apellido
-//				   	  o Precio o Tipo de pasajero o Código de vuelo
+				    //o Precio o Tipo de pasajero o Código de vuelo
 				if(contadorPassenger>0)
 				{
-					modifyPassenger(listPassengers, MAX_PASSENGER,idIncremental);
+					modifyPassenger(listPassengers, MAX_PASSENGER, idIncremental);
 				}
 				else
 				{
@@ -162,6 +117,7 @@ int main(void)
 							showAboveProm(listPassengers, MAX_PASSENGER, promedioPrices);
 							break;
 						case 3:
+							//Mustro vuelos activos
 							validarActivos = showActiveFlights(listPassengers, MAX_PASSENGER);
 							if(validarActivos==0)
 							{
@@ -198,29 +154,3 @@ int main(void)
 	system("pause");
 	return EXIT_SUCCESS;
 }
-
-//FUNCIONES
-
-
-
-
-
-
-
-//submenu MODIFICAR: se ingrese id. nombre - apellido - precio - codigo de vuelo - tipo -
-
-//submenu informar: lista por apellido y tipo - total precio, promedio pasajes y cuantos arriba del promedio
-// - listar pasajeros con codigo de vuelo y activos.
-
-
-
-//void cargaForzada(Passenger list[],int len)
-//{
-//	Passenger carga[]={
-//			{1000,"Alejandro","Garcia",250000,"ARS1234TUR",1,0,OCCUPED},
-//			{1001,"Gabriel", "Salvador",325000,"ARS1234EJE",2,0,OCCUPED},
-//			{1002,"Camila", "Leyes",433000.25,"EUR9874PCL",3,0,OCCUPED},
-//			{1003,"Rosa","Diaz",275000,"EUR9876",1,0,OCCUPED}
-//	};
-//	list= carga;
-//}

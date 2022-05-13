@@ -23,6 +23,11 @@
 #define DEMORADO 2
 #define CANCELADO 3
 
+#define TURISTA 1
+#define EJECUTIVA 2
+#define PRIMERA 3
+
+
 //esctructuras
 typedef struct{
 	int id;
@@ -59,6 +64,8 @@ int removePassenger(Passenger* list, int len, int id);
 int sortPassengers(Passenger* list, int len, int order);
 int printPassenger(Passenger* list, int length);
 int sortPassengers(Passenger* list, int len, int order);
+
+int cargaPassenger(Passenger listPassengers[], int len, int* contadorPassenger, int* pAltaMain);
 
 int showActiveFlights(Passenger* list, int len);
 

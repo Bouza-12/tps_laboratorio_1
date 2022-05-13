@@ -7,6 +7,13 @@
 
 #include "ArrayPassenger.h"
 
+static int idIncremental = 1000;
+static int ePassenger_getID();
+/// Funcion para encontrar un id unico sin depender de posiciones
+/// @return devuelve el id generado
+static int ePassenger_getID() {
+	return idIncremental++;
+}
 
 /** \brief To indicate that all position in the array are empty,
 * this function put the flag (isEmpty) in TRUE in all
@@ -232,6 +239,10 @@ int sortPassengers(Passenger* list, int len, int order)
 	return retorno;
 }
 
+/// Sirve para modificar algun dato de los pasajeros
+/// @param list
+/// @param len
+/// @param idmax
 void modifyPassenger(Passenger list[], int len,int idmax)
 {
 	int modifValidada;
@@ -393,4 +404,55 @@ void showAboveProm(Passenger list[],int len, float promedio)
 			}
 		}
 	}
+}
+
+/// Funcion madre de carga de pasajeros para poder ingresar datos
+/// @param listPassengers : vector de Passenger donde cargar el nuevo
+/// @param len : largo de ese vector
+/// @param contadorPassenger: variable controladora de cuantos pasajeros cargados hay
+/// @param pIdActualMain: puntero que guarda el ultimo id ingresado en una variable en el main
+/// @return devuelve 1 para ok si se dio de alta  un passajero/ 0 si ocurrio algun error / -1 si no pudo ingresar a la funcion addPassenger
+int cargaPassenger(Passenger listPassengers[], int len, int* pContadorPassenger, int* pIdActualMain)
+{
+	int retorno = -1;
+	int addSuccess;
+	int typePassenger;
+	char name[51], lastName[51], flycode[10];
+	float price;
+	int validarFloat, validarInt;
+	int idAlta;
+	int contador = *pContadorPassenger;
+
+	cargarNombre(name, 51, "Ingrese el NOMBRE del pasajero: ");
+	cargarNombre(lastName, 51, "Ingrese el APELLIDO del pasajero: ");
+
+	validarFloat = validarNumeroFlotante(&price, "Ingrese el PRECIO del pasaje: ", "Error!!! Debe ingresar un PRECIO valido: ", 1, 999999999 , 5);
+	if(validarFloat!=0)
+	{
+		printf("No se pudo ingresar el precio!!!");
+	}
+	validarInt = validarEntero(&typePassenger, "Ingrese el TIPO DE PASAJERO\n1 - Clase TURISTA\n2 - Clase EJECUTIVA\n3 - PRIMERA CLASE\n", "Error!!! Debe seleccionar una opcion correcta: ", 1, 3);
+	if(validarInt!=0)
+	{
+		printf("No se pudo ingresar el Tipo de Pasajero!!!");
+	}
+	printf("Ingrese el CODIGO DE VUELO: ");
+	scanf("%s",flycode);
+	fflush(stdin);
+	idAlta = ePassenger_getID();
+	*pIdActualMain =idAlta;
+	addSuccess = addPassenger(listPassengers, len, idAlta, name, lastName, price, typePassenger, flycode);
+	if(addSuccess!=0 && validarFloat !=0 && validarInt !=0)
+	{
+		printf("Ocurrio un error al cargar el pasajero, intentelo de nuevo.");
+		retorno=0;
+	}
+	else
+	{
+		contador++;
+		*pContadorPassenger = contador;
+		printf("Se dio de alta con exito!");
+		retorno=1;
+	}
+	return retorno;
 }
